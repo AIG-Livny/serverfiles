@@ -1,6 +1,5 @@
 FROM ubuntu:22.04
 
-EXPOSE 5601/tcp 51413/udp
 RUN apt update && apt install -yqq transmission-daemon
-COPY [ "docker-entrypoint.sh", "/" ]
+RUN echo 'transmission-daemon -f' >> /docker-entrypoint.sh
 ENTRYPOINT [ "/docker-entrypoint.sh" ]

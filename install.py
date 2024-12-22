@@ -145,6 +145,8 @@ def install_transmission():
         'run',
         '--rm',
         '-i',
+        '-p 5601:5601/tcp',
+        '-p 51413:51413/udp',
         '--name transmission',
         '-v /home/ivan/transmission:/root/.config/transmission-daemon',
         '-v /home/ivan/dcshare/Downloads:/Downloads',
