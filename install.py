@@ -135,3 +135,24 @@ def install_nginx():
     sh('systemctl daemon-reload')
     sh('systemctl enable nginx.service')
     sh('systemctl start nginx.service')
+
+def install_transmission():
+    sh('docker build -t transmission ./transmission')
+    sh('systemctl stop transmission.service')
+    os.makedirs('/home/ivan/dcshare/Downloads',exist_ok=True)
+    exec = [
+        'docker',
+        'run',
+        '--rm',
+        '-i',
+        '--name transmission',
+        '-v /home/ivan/transmission:/root/.config/transmission-daemon',
+        '-v /home/ivan/dcshare/Downloads:/Downloads',
+        'transmission',
+    ]
+    exec = ' '.join(exec)
+    with open('/etc/systemd/system/transmission.service','w+') as f:
+        f.write(get_docker_service_text('Transmission',exec))
+    sh('systemctl daemon-reload')
+    sh('systemctl enable transmission.service')
+    sh('systemctl start transmission.service')
