@@ -186,3 +186,63 @@ def install_airdcpp():
     sh('systemctl daemon-reload')
     sh('systemctl enable airdcpp.service')
     sh('systemctl start airdcpp.service')
+
+def install_telegram_api(api_id:str, api_hash:str):
+    sh('systemctl stop telegram-bot-api.service')
+    service_text = f'''
+[Unit]
+Description=Telegram bot API
+After=network.target
+
+[Service]
+User=ivan
+ExecStart=/home/ivan/tg_bots/telegram-bot-api --api-id={api_id} --api-hash={api_hash} --local --dir /home/ivan/tg_bots
+
+[Install]
+WantedBy=multi-user.target
+'''
+    with open('/etc/systemd/system/telegram-bot-api.service','w+') as f:
+        f.write(service_text)
+    sh('systemctl daemon-reload')
+    sh('systemctl enable telegram-bot-api.service')
+    sh('systemctl start telegram-bot-api.service')
+
+def install_telegram_recog_bot(token):
+    sh('systemctl stop telegram-recog-bot.service')
+    service_text = f'''
+[Unit]
+Description=Telegram Speech Recognition bot
+After=telegram-bot-api.service
+
+[Service]
+User=ivan
+ExecStart=python3 /home/ivan/tg_bots/speech_recog_bot.py {token}
+
+[Install]
+WantedBy=multi-user.target
+'''
+    with open('/etc/systemd/system/telegram-recog-bot.service','w+') as f:
+        f.write(service_text)
+    sh('systemctl daemon-reload')
+    sh('systemctl enable telegram-recog-bot.service')
+    sh('systemctl start telegram-recog-bot.service')
+
+def install_telegram_currency_bot(token):
+    sh('systemctl stop telegram-currency-bot.service')
+    service_text = f'''
+[Unit]
+Description=Telegram Currency Converter bot
+After=telegram-bot-api.service
+
+[Service]
+User=ivan
+ExecStart=python3 /home/ivan/tg_bots/tgCurrencyConverter_bot.py {token}
+
+[Install]
+WantedBy=multi-user.target
+'''
+    with open('/etc/systemd/system/telegram-currency-bot.service','w+') as f:
+        f.write(service_text)
+    sh('systemctl daemon-reload')
+    sh('systemctl enable telegram-currency-bot.service')
+    sh('systemctl start telegram-currency-bot.service')
