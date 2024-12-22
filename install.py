@@ -78,3 +78,11 @@ def install_ftp(user:str,password:str,local_path:str):
     sh('systemctl daemon-reload')
     sh('systemctl enable aig_ftp.service')
     sh('systemctl start aig_ftp.service')
+
+def install_postgres(user:str,password:str):
+    exec = f'docker run --rm -i -p 5432:5432 --name pg -e POSTGRES_USER={user} POSTGRES_PASSWORD={password} postgres'
+    with open('/etc/systemd/system/postgres.service','w+') as f:
+        f.write(get_docker_service_text('PostgreSQL server',exec))
+    sh('systemctl daemon-reload')
+    sh('systemctl enable postgres.service')
+    sh('systemctl start postgres.service')
