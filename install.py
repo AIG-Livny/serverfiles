@@ -246,3 +246,45 @@ WantedBy=multi-user.target
     sh('systemctl daemon-reload')
     sh('systemctl enable telegram-currency-bot.service')
     sh('systemctl start telegram-currency-bot.service')
+
+def install_lenta_set(pg_connect_string):
+    sh('systemctl stop mitmproxy.service')
+    service_text = f'''
+[Unit]
+Description=MITM Proxy
+After=network.target
+
+[Service]
+User=ivan
+Environment="PG_CONNECT_STRING={pg_connect_string}"
+ExecStart=mitmdump -s /home/ivan/mitm/proxy_script.py
+
+[Install]
+WantedBy=multi-user.target
+'''
+    with open('/etc/systemd/system/mitmproxy.service','w+') as f:
+        f.write(service_text)
+    sh('systemctl daemon-reload')
+    sh('systemctl enable mitmproxy.service')
+    sh('systemctl start mitmproxy.service')
+    sh('systemctl stop mitmproxy.service')
+
+    sh('systemctl stop lentawalker.service')
+    service_text = f'''
+[Unit]
+Description=Bot Lenta Walker
+After=mitmproxy.service
+
+[Service]
+User=ivan
+Environment="PG_CONNECT_STRING={pg_connect_string}"
+ExecStart=python3 /home/ivan/mitm/bot_loader.py
+
+[Install]
+WantedBy=multi-user.target
+'''
+    with open('/etc/systemd/system/lentawalker.service','w+') as f:
+        f.write(service_text)
+    sh('systemctl daemon-reload')
+    sh('systemctl enable lentawalker.service')
+    sh('systemctl start lentawalker.service')
