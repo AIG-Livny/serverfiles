@@ -115,3 +115,23 @@ def install_postgres(user:str,password:str):
     sh('systemctl daemon-reload')
     sh('systemctl enable postgres.service')
     sh('systemctl start postgres.service')
+
+def install_nginx():
+    sh('systemctl stop nginx.service')
+    os.makedirs('/home/ivan/nginx_content',exist_ok=True)
+    exec = [
+        'docker',
+        'run',
+        '--rm',
+        '-i',
+        '-p 80:80',
+        '--name nginx',
+        '-v /home/ivan/nginx_content:/usr/share/nginx/html',
+        'nginx',
+    ]
+    exec = ' '.join(exec)
+    with open('/etc/systemd/system/nginx.service','w+') as f:
+        f.write(get_docker_service_text('Nginx',exec))
+    sh('systemctl daemon-reload')
+    sh('systemctl enable nginx.service')
+    sh('systemctl start nginx.service')
