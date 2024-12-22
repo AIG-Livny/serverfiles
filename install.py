@@ -70,9 +70,24 @@ ExecStart={exec}
 WantedBy=multi-user.target
 '''
 
-def install_ftp(user:str,password:str,local_path:str):
+def install_ftp(user:str,password:str):
+    sh('systemctl stop aig_ftp.service')
     sh('docker build -t ftp ./ftp')
-    exec = f'docker run --rm -i -e FTP_PASS={password} -e FTP_USER={user} --name ftp --publish 20-21:20-21/tcp -p 40000-40009:40000-40009/tcp -v {local_path}:/home/ivan ftp'
+    exec = [
+        'docker',
+        'run',
+        '--rm',
+        '-i',
+        f'-e FTP_PASS={password}',
+        f'-e FTP_USER={user}',
+        '--name ftp',
+        '--publish 20-21:20-21/tcp',
+        '-p 40000-40009:40000-40009/tcp',
+        '-v /home/ivan:/home/ivan',
+        'ftp'
+    ]
+
+    exec = ' '.join(exec)
     with open('/etc/systemd/system/aig_ftp.service','w+') as f:
         f.write(get_docker_service_text('FTP server',exec))
     sh('systemctl daemon-reload')
@@ -80,7 +95,21 @@ def install_ftp(user:str,password:str,local_path:str):
     sh('systemctl start aig_ftp.service')
 
 def install_postgres(user:str,password:str):
-    exec = f'docker run --rm -i -p 5432:5432 --name pg -e POSTGRES_USER={user} -e POSTGRES_PASSWORD={password} postgres'
+    sh('systemctl stop postgres.service')
+    os.makedirs('/home/ivan/postgres-base',exist_ok=True)
+    exec = [
+        'docker',
+        'run',
+        '--rm',
+        '-i',
+        '-p 5432:5432',
+        '--name pg',
+        f'-e POSTGRES_USER={user}',
+        f'-e POSTGRES_PASSWORD={password}',
+        '-v /home/ivan/postgres-base:/var/lib/postgresql/data'
+        'postgres',
+    ]
+    exec = ' '.join(exec)
     with open('/etc/systemd/system/postgres.service','w+') as f:
         f.write(get_docker_service_text('PostgreSQL server',exec))
     sh('systemctl daemon-reload')
