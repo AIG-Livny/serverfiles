@@ -158,3 +158,31 @@ def install_transmission():
     sh('systemctl daemon-reload')
     sh('systemctl enable transmission.service')
     sh('systemctl start transmission.service')
+
+def install_airdcpp():
+    sh('docker build -t airdcpp ./airdcpp')
+    sh('systemctl stop airdcpp.service')
+    os.makedirs('/home/ivan/dcshare/Downloads',exist_ok=True)
+    exec = [
+        'docker',
+        'run',
+        '--rm',
+        '-i',
+        '--name airdcpp',
+        '-p 21248:21248/tcp',
+        '-p 21248:21248/udp',
+        '-p 21249:21249/tcp',
+        '-p 5600:5600/tcp',
+        '-p 4430:5601/tcp',
+        '-v /home/ivan/Downloads:/Downloads',
+        '-v /home/ivan/dcshare:/Share',
+        '-v /home/ivan/airdcpp-webclient:/app',
+        '-v /home/ivan/.airdc++:/root/.airdc+',
+        'airdcpp'
+    ]
+    exec = ' '.join(exec)
+    with open('/etc/systemd/system/airdcpp.service','w+') as f:
+        f.write(get_docker_service_text('AirDC++ dchub client',exec))
+    sh('systemctl daemon-reload')
+    sh('systemctl enable airdcpp.service')
+    sh('systemctl start airdcpp.service')
