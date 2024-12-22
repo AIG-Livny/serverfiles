@@ -10,5 +10,5 @@ RUN apt update && apt install -yqq \
 	libleveldb1d \
 	libmaxminddb0
 
-COPY [ "/src/docker-entrypoint.sh", "/" ]
+COPY [ "docker-entrypoint.sh", "/" ]
 ENTRYPOINT [ "/docker-entrypoint.sh" ]
