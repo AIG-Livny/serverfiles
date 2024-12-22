@@ -106,7 +106,7 @@ def install_postgres(user:str,password:str):
         '--name pg',
         f'-e POSTGRES_USER={user}',
         f'-e POSTGRES_PASSWORD={password}',
-        '-v /home/ivan/postgres-base:/var/lib/postgresql/data'
+        '-v /home/ivan/postgres-base:/var/lib/postgresql/data',
         'postgres',
     ]
     exec = ' '.join(exec)
