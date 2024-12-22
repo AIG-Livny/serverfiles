@@ -1,3 +1,3 @@
 #!/bin/sh
 
-transmission-daemon --logfile /root/.config/transmission-daemon/transmission.log
+transmission-daemon -f --logfile /root/.config/transmission-daemon/transmission.log
