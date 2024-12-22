@@ -177,7 +177,7 @@ def install_airdcpp():
         '-v /home/ivan/Downloads:/Downloads',
         '-v /home/ivan/dcshare:/Share',
         '-v /home/ivan/airdcpp-webclient:/app',
-        '-v /home/ivan/.airdc++:/root/.airdc+',
+        '-v /home/ivan/.airdc++:/root/.airdc++',
         'airdcpp'
     ]
     exec = ' '.join(exec)

@@ -1,7 +1,6 @@
 FROM ubuntu:22.04
 
-ENV DEBIAN_FRONTEND=noninteractive \
-	LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/app/build/airdcpp-webapi:/app/build/airdcpp-core"
+ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt update && apt install -yqq \
 	libboost-regex1.74.0 \
